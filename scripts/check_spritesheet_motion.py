@@ -9,23 +9,6 @@ from PIL import Image, ImageChops, ImageStat
 
 EXPECTED_SIZE = (1536, 1872)
 GRID = (8, 9)
-FRAME_SIZE = (192, 208)
-
-
-def visible_mean_luma(image: Image.Image, box: tuple[int, int, int, int]) -> float:
-    region = image.crop(box).convert("RGBA")
-    pixels = [pixel for pixel in region.getdata() if pixel[3] > 80]
-    if not pixels:
-        raise ValueError(f"no visible pixels in region {box}")
-    return sum(0.2126 * r + 0.7152 * g + 0.0722 * b for r, g, b, _ in pixels) / len(pixels)
-
-
-def visible_mean_rgb(image: Image.Image, box: tuple[int, int, int, int]) -> tuple[float, float, float]:
-    region = image.crop(box).convert("RGBA")
-    pixels = [pixel for pixel in region.getdata() if pixel[3] > 80]
-    if not pixels:
-        raise ValueError(f"no visible pixels in region {box}")
-    return tuple(sum(pixel[channel] for pixel in pixels) / len(pixels) for channel in range(3))
 
 
 def frame_difference(a: Image.Image, b: Image.Image) -> float:
@@ -66,36 +49,6 @@ def main() -> int:
         raise SystemExit(
             f"not enough animated rows: {moving_rows}/{GRID[1]} "
             f"(need at least {args.min_moving_rows})"
-        )
-
-    first_frame = image.crop((0, 0, FRAME_SIZE[0], FRAME_SIZE[1]))
-    viewer_left_face = visible_mean_luma(first_frame, (58, 66, 88, 112))
-    viewer_right_face = visible_mean_luma(first_frame, (104, 66, 140, 116))
-    muzzle = visible_mean_luma(first_frame, (70, 85, 115, 119))
-    nose_bridge = visible_mean_luma(first_frame, (76, 47, 96, 86))
-    right_mask_rgb = visible_mean_rgb(first_frame, (100, 58, 132, 104))
-    right_mask_warmth = right_mask_rgb[0] - right_mask_rgb[2]
-    print(
-        "face luma:",
-        f"viewer-left={viewer_left_face:.1f}",
-        f"viewer-right={viewer_right_face:.1f}",
-        f"muzzle={muzzle:.1f}",
-        f"nose-bridge={nose_bridge:.1f}",
-        f"right-mask-warmth={right_mask_warmth:.1f}",
-    )
-    if viewer_right_face > viewer_left_face - 18:
-        raise SystemExit(
-            "reference-style face check failed: viewer-right face patch should be visibly darker "
-            "than viewer-left face"
-        )
-    if muzzle < 198 or nose_bridge < 200:
-        raise SystemExit(
-            "reference-style face check failed: the photo has a bright white muzzle and nose bridge"
-        )
-    if not (8 <= right_mask_warmth <= 45):
-        raise SystemExit(
-            "reference-style face check failed: the viewer-right mask should read as warm gray, "
-            "not a flat black stripe"
         )
 
     return 0

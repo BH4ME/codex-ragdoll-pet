@@ -9,6 +9,15 @@ from PIL import Image, ImageChops, ImageStat
 
 EXPECTED_SIZE = (1536, 1872)
 GRID = (8, 9)
+FRAME_SIZE = (192, 208)
+
+
+def visible_mean_luma(image: Image.Image, box: tuple[int, int, int, int]) -> float:
+    region = image.crop(box).convert("RGBA")
+    pixels = [pixel for pixel in region.getdata() if pixel[3] > 80]
+    if not pixels:
+        raise ValueError(f"no visible pixels in region {box}")
+    return sum(0.2126 * r + 0.7152 * g + 0.0722 * b for r, g, b, _ in pixels) / len(pixels)
 
 
 def frame_difference(a: Image.Image, b: Image.Image) -> float:
@@ -49,6 +58,20 @@ def main() -> int:
         raise SystemExit(
             f"not enough animated rows: {moving_rows}/{GRID[1]} "
             f"(need at least {args.min_moving_rows})"
+        )
+
+    first_frame = image.crop((0, 0, FRAME_SIZE[0], FRAME_SIZE[1]))
+    viewer_left_face = visible_mean_luma(first_frame, (58, 66, 88, 112))
+    viewer_right_face = visible_mean_luma(first_frame, (104, 66, 140, 116))
+    print(
+        "face luma:",
+        f"viewer-left={viewer_left_face:.1f}",
+        f"viewer-right={viewer_right_face:.1f}",
+    )
+    if viewer_right_face > viewer_left_face - 18:
+        raise SystemExit(
+            "reference-style face check failed: viewer-right face patch should be visibly darker "
+            "than viewer-left face"
         )
 
     return 0

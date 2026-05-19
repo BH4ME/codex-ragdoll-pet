@@ -1,0 +1,10 @@
+.DS_Store
+.cxresume_sessions*
+.tmp-*
+
+# Local generation/debug outputs are intentionally not published.
+output/
+
+# Local Codex state and logs must never be committed.
+.codex/
+*.log

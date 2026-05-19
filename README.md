@@ -1,6 +1,6 @@
 # Codex Ragdoll Pet
 
-A custom animated Ragdoll cat pet for the Codex desktop app.
+A custom animated Ragdoll cat pet for the Codex desktop app, with an asymmetric reference-style face and extra motion states.
 
 ![Ragdoll pet preview](assets/ragdoll-preview.png)
 
@@ -30,7 +30,7 @@ The pet files are installed to:
 - `pet/ragdoll-cat/spritesheet.png`: 1536 x 1872 Codex pet spritesheet
 - `assets/ragdoll-preview.png`: preview image
 - `assets/previews/ragdoll-motion-preview.gif`: compact animation preview
-- `scripts/generate_animated_ragdoll_spritesheet.py`: rebuilds the animated spritesheet from the preview asset
+- `scripts/generate_animated_ragdoll_spritesheet.py`: rebuilds the animated spritesheet from the preview asset, including the asymmetric face markings
 - `scripts/check_spritesheet_motion.py`: verifies that the spritesheet has non-static frame motion
 
 ## Notes

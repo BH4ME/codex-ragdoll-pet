@@ -84,76 +84,169 @@ def apply_reference_markings(source: Image.Image) -> Image.Image:
     """Paint the user's reference-cat face onto the source sprite."""
     cat = source.copy()
 
+    cream = (250, 245, 226)
+    warm_white = (255, 251, 236)
+    warm_gray = (144, 125, 101)
+    dark_gray = (65, 55, 47)
+
+    # First cover the old symmetric mask; the reference cat has a bright, wide
+    # white muzzle and a white blaze rising between uneven gray patches.
     paint_soft(
         cat,
-        (250, 242, 221),
-        130,
-        lambda draw: draw.ellipse((32, 28, 115, 101), fill=255),
-        blur=2.0,
-    )
-    paint_soft(
-        cat,
-        (82, 72, 61),
-        210,
+        cream,
+        238,
         lambda draw: (
-            draw.polygon([(20, 24), (36, 3), (52, 34), (38, 47), (24, 39)], fill=255),
-            draw.polygon([(111, 13), (132, 5), (143, 34), (130, 56), (110, 42)], fill=255),
+            draw.ellipse((17, 26, 123, 112), fill=255),
+            draw.ellipse((30, 64, 119, 124), fill=255),
+            draw.polygon([(45, 18), (94, 15), (126, 55), (113, 112), (39, 112), (14, 63)], fill=255),
+        ),
+        blur=1.7,
+    )
+
+    # Left side in the photo: dark ear and an irregular gray cap, but the cheek
+    # and eye area stay mostly white.
+    paint_soft(
+        cat,
+        dark_gray,
+        215,
+        lambda draw: (
+            draw.polygon([(16, 22), (34, 2), (52, 35), (39, 51), (21, 42)], fill=255),
+            draw.polygon([(110, 13), (132, 4), (145, 34), (132, 57), (111, 42)], fill=255),
         ),
         blur=0.8,
     )
     paint_soft(
         cat,
-        (105, 96, 82),
-        155,
+        warm_gray,
+        205,
         lambda draw: draw.polygon(
-            [(29, 18), (58, 4), (95, 9), (108, 27), (92, 45), (61, 39), (42, 50), (25, 37)],
-            fill=255,
-        ),
-        blur=1.3,
-    )
-    paint_soft(
-        cat,
-        (63, 59, 52),
-        225,
-        lambda draw: draw.polygon(
-            [(83, 13), (121, 12), (141, 38), (136, 72), (122, 97), (99, 93), (86, 68), (78, 38)],
+            [(18, 24), (48, 9), (75, 11), (88, 25), (78, 42), (57, 38), (39, 48), (19, 39)],
             fill=255,
         ),
         blur=1.1,
     )
+
+    # Right side in the photo: a large warm gray mask wraps the higher right eye
+    # and runs down the cheek, with a soft white muzzle cutting through it.
     paint_soft(
         cat,
-        (252, 247, 231),
-        205,
+        warm_gray,
+        238,
         lambda draw: (
-            draw.polygon([(55, 10), (77, 12), (85, 45), (75, 70), (59, 59), (48, 27)], fill=255),
-            draw.ellipse((31, 36, 82, 96), fill=255),
-            draw.ellipse((50, 63, 105, 101), fill=255),
+            draw.polygon(
+                [(88, 15), (122, 9), (149, 36), (149, 76), (132, 116), (105, 106), (90, 75), (82, 42)],
+                fill=255,
+            ),
+            draw.ellipse((90, 27, 150, 111), fill=255),
         ),
+        blur=1.35,
+    )
+    paint_soft(
+        cat,
+        dark_gray,
+        76,
+        lambda draw: draw.ellipse((88, 46, 121, 76), fill=255),
+        blur=1.4,
+    )
+
+    # Carve the photo's bright white blaze and muzzle back through the gray.
+    paint_soft(
+        cat,
+        warm_white,
+        245,
+        lambda draw: draw.polygon([(55, 8), (80, 13), (93, 43), (91, 70), (79, 88), (60, 71), (49, 35)], fill=255),
+        blur=1.2,
+    )
+    paint_soft(
+        cat,
+        warm_white,
+        252,
+        lambda draw: (
+            draw.ellipse((20, 49, 80, 106), fill=255),
+            draw.ellipse((53, 64, 119, 121), fill=255),
+            draw.ellipse((35, 80, 115, 130), fill=255),
+            draw.polygon([(66, 58), (94, 59), (104, 105), (84, 127), (60, 109)], fill=255),
+        ),
+        blur=1.2,
+    )
+    paint_soft(
+        cat,
+        warm_gray,
+        150,
+        lambda draw: draw.polygon([(107, 64), (128, 59), (126, 101), (116, 112), (106, 99)], fill=255),
         blur=1.4,
     )
     paint_soft(
         cat,
-        (90, 83, 72),
-        120,
-        lambda draw: draw.polygon([(100, 72), (126, 76), (134, 105), (107, 101)], fill=255),
-        blur=2.2,
+        warm_white,
+        145,
+        lambda draw: draw.polygon([(118, 91), (137, 92), (131, 124), (111, 124), (105, 109)], fill=255),
+        blur=1.2,
+    )
+    paint_soft(
+        cat,
+        warm_white,
+        235,
+        lambda draw: (
+            draw.ellipse((58, 80, 112, 126), fill=255),
+            draw.ellipse((70, 88, 124, 121), fill=255),
+        ),
+        blur=0.9,
+    )
+    paint_soft(
+        cat,
+        (222, 215, 197),
+        52,
+        lambda draw: draw.ellipse((98, 82, 138, 114), fill=255),
+        blur=2.0,
+    )
+    paint_soft(
+        cat,
+        warm_gray,
+        210,
+        lambda draw: draw.polygon([(122, 47), (153, 53), (152, 112), (132, 125), (117, 100)], fill=255),
+        blur=1.2,
     )
 
     draw = ImageDraw.Draw(cat, "RGBA")
-    draw.ellipse((51, 47, 67, 62), fill=(42, 125, 172, 235), outline=(34, 34, 31, 235), width=2)
-    draw.ellipse((91, 46, 108, 63), fill=(35, 106, 160, 240), outline=(28, 28, 27, 245), width=2)
-    draw.ellipse((56, 49, 61, 54), fill=(215, 240, 255, 230))
-    draw.ellipse((96, 48, 101, 53), fill=(208, 236, 255, 230))
-    draw.polygon([(74, 69), (86, 69), (80, 78)], fill=(224, 147, 151, 240))
-    draw.arc((70, 70, 80, 86), 35, 125, fill=(128, 83, 83, 190), width=2)
-    draw.arc((80, 70, 91, 86), 55, 145, fill=(128, 83, 83, 190), width=2)
-    for side, x0 in (("left", 66), ("right", 88)):
+    fur_strokes = [
+        (48, 18, 50, 42),
+        (56, 15, 57, 38),
+        (63, 13, 63, 34),
+        (74, 15, 72, 39),
+        (88, 23, 87, 50),
+        (101, 21, 104, 52),
+        (118, 26, 115, 61),
+        (132, 38, 122, 73),
+    ]
+    for x0, y0, x1, y1 in fur_strokes:
+        color = (81, 71, 59, 64) if x0 > 82 else (126, 114, 95, 72)
+        draw.line((x0, y0, x1, y1), fill=color, width=1)
+
+    # Uneven eyes from the photo: the viewer-left eye sits lower/smaller, while
+    # the viewer-right eye is larger inside the gray mask.
+    draw.ellipse((47, 61, 68, 77), fill=(27, 25, 24, 238))
+    draw.ellipse((50, 63, 66, 76), fill=(78, 107, 124, 240))
+    draw.ellipse((55, 64, 66, 75), fill=(24, 29, 33, 235))
+    draw.ellipse((51, 62, 56, 66), fill=(235, 245, 252, 228))
+    draw.ellipse((90, 49, 114, 73), fill=(23, 23, 22, 246))
+    draw.ellipse((93, 51, 111, 71), fill=(56, 94, 120, 246))
+    draw.ellipse((99, 54, 111, 69), fill=(20, 26, 32, 242))
+    draw.ellipse((94, 51, 100, 57), fill=(225, 239, 250, 228))
+
+    draw.polygon([(77, 79), (86, 78), (89, 82), (84, 88), (77, 87), (74, 83)], fill=(226, 157, 155, 226))
+    draw.ellipse((78, 81, 80, 83), fill=(123, 72, 78, 96))
+    draw.ellipse((86, 80, 88, 82), fill=(123, 72, 78, 96))
+    draw.line((83, 88, 83, 96), fill=(105, 68, 70, 96), width=1)
+    draw.arc((73, 92, 84, 101), 30, 95, fill=(105, 68, 70, 68), width=1)
+    draw.arc((82, 92, 98, 101), 85, 155, fill=(105, 68, 70, 68), width=1)
+
+    for side, x0, y0, length in (("left", 60, 91, 48), ("right", 94, 88, 61)):
         sign = -1 if side == "left" else 1
-        for idx, dy in enumerate((0, 8, 16)):
+        for idx, dy in enumerate((-12, -4, 5, 14, 22)):
             draw.line(
-                (x0, 78 + dy, x0 + sign * (34 + idx * 4), 71 + dy * 0.75),
-                fill=(252, 249, 235, 145),
+                (x0, y0 + dy, x0 + sign * (length + idx * 5), y0 + dy * 0.50 - 8),
+                fill=(255, 253, 241, 138),
                 width=1,
             )
     return cat
@@ -263,7 +356,7 @@ def make_frame(
         ty = baseline - 78 + math.cos(phase * math.tau) * 4
         box = (tx - 23, ty - 30, tx + 35, ty + 34) if side > 0 else (tx - 35, ty - 30, tx + 23, ty + 34)
         start, end = (210, 330) if side > 0 else (210, 330)
-        draw.arc(box, start, end, fill=(86, 72, 61, 130), width=3)
+        draw.arc(box, start, end, fill=(86, 72, 61, 38), width=2)
 
     if dust:
         drift = math.sin(phase * math.tau) * 8
